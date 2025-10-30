@@ -1,12 +1,10 @@
-package com.example.bulk_transactions;
+package com.example.bulk_transactions.service;
 
 import com.example.bulk_transactions.client.TransactionServiceClient;
 import com.example.bulk_transactions.dto.BulkTransactionRequest;
 import com.example.bulk_transactions.dto.BulkTransactionResponse;
 import com.example.bulk_transactions.dto.TransactionServiceRequest;
-import com.example.bulk_transactions.dto.TransactionServiceResult;
 import com.example.bulk_transactions.exception.TransactionServiceException;
-import com.example.bulk_transactions.service.BulkTransactionService;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

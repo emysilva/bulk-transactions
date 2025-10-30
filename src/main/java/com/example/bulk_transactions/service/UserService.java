@@ -2,6 +2,7 @@ package com.example.bulk_transactions.service;
 
 import com.example.bulk_transactions.dto.LoginRequest;
 import com.example.bulk_transactions.dto.RegisterRequest;
+import com.example.bulk_transactions.exception.BadRequestException;
 import com.example.bulk_transactions.exception.InvalidCredentialsException;
 import com.example.bulk_transactions.model.AppUser;
 import com.example.bulk_transactions.repository.UserRepository;
@@ -28,7 +29,7 @@ public class UserService {
 
     public void registerUser(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already taken");
+            throw new BadRequestException("Username already taken");
         }
 
         AppUser user = new AppUser();

@@ -44,6 +44,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, "Unauthorized");
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Map<String, Object>> handleBadRequestException(BadRequestException ex) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, "Bad Request");
+    }
+
     @ExceptionHandler(TransactionServiceException.class)
     public ResponseEntity<Map<String, Object>> handleTransactionServiceException(TransactionServiceException ex) {
         Map<String, Object> body = new HashMap<>();
