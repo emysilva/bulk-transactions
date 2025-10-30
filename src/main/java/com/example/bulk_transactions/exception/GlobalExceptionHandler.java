@@ -1,18 +1,11 @@
 package com.example.bulk_transactions.exception;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SecurityException;
-import io.jsonwebtoken.security.SignatureException;
-import jakarta.servlet.ServletException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,25 +13,16 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * Handle general exceptions
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneralException(Exception ex) {
         return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
     }
 
-    /**
-     * Handle specific resource not found
-     */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND, "Resource Not Found");
     }
 
-    /**
-     * Handle invalid input or validation errors
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, Object> body = new HashMap<>();
@@ -55,57 +39,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * Handle unauthorized access or JWT issues
-     */
-//    @ExceptionHandler(io.jsonwebtoken.security.SecurityException.class)
-//    public ResponseEntity<Map<String, Object>> handleSecurityException(SecurityException ex) {
-//        Map<String, Object> body = new HashMap<>();
-//        body.put("timestamp", LocalDateTime.now());
-//        body.put("status", HttpStatus.UNAUTHORIZED.value());
-//        body.put("error", "Unauthorized");
-//        body.put("message", ex.getMessage());
-//        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
-//    }
-
-    /**
-     * Handle expired JWT token
-     */
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<Map<String, Object>> handleExpiredJwtException(ExpiredJwtException ex) {
-        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, "JWT expired");
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, "Unauthorized");
     }
 
-    /**
-     * Handle invalid JWT signature
-     */
-    @ExceptionHandler(SignatureException.class)
-    public ResponseEntity<Map<String, Object>> handleSignatureException(SignatureException ex) {
-        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, "Invalid JWT signature");
-    }
-
-    /**
-     * Handle malformed JWT token
-     */
-    @ExceptionHandler(MalformedJwtException.class)
-    public ResponseEntity<Map<String, Object>> handleMalformedJwtException(MalformedJwtException ex) {
-        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, "Malformed JWT token");
-    }
-
-    /**
-     * Handle unsupported JWT token
-     */
-    @ExceptionHandler(UnsupportedJwtException.class)
-    public ResponseEntity<Map<String, Object>> handleUnsupportedJwtException(UnsupportedJwtException ex) {
-        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, "Unsupported JWT token");
-    }
-
-    /**
-     * Handle general JWT security issues
-     */
-    @ExceptionHandler(io.jsonwebtoken.security.SecurityException.class)
-    public ResponseEntity<Map<String, Object>> handleJwtSecurityException(SecurityException ex) {
-        return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, "Invalid JWT token");
+    @ExceptionHandler(TransactionServiceException.class)
+    public ResponseEntity<Map<String, Object>> handleTransactionServiceException(TransactionServiceException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", ex.getStatusCode());
+        body.put("error", "Transaction Service Error");
+        body.put("service", ex.getServiceName());
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(ex.getStatusCode()).body(body);
     }
 
     private ResponseEntity<Map<String, Object>> buildErrorResponse(Exception ex, HttpStatus status, String error) {

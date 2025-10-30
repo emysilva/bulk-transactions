@@ -1,14 +1,14 @@
 package com.example.bulk_transactions.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -30,7 +33,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
@@ -52,18 +57,31 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        }  catch (ExpiredJwtException ex) {
-            throw new ExpiredJwtException(ex.getHeader(), ex.getClaims(), "JWT token has expired");
-        } catch (SignatureException ex) {
-            throw new SignatureException("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            throw new MalformedJwtException("Malformed JWT token");
-        } catch (UnsupportedJwtException ex) {
-            throw new UnsupportedJwtException("Unsupported JWT token");
-        } catch (JwtException ex) {
-            throw new JwtException("Invalid JWT token");
-        }
 
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
+        } catch (SignatureException e) {
+            writeJwtError(response, request, "Invalid JWT signature");
+        } catch (ExpiredJwtException e) {
+            writeJwtError(response, request, "JWT token expired");
+        } catch (MalformedJwtException e) {
+            writeJwtError(response, request, "Malformed JWT token");
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+            throw e;
+        }
+    }
+
+    private void writeJwtError(HttpServletResponse response, HttpServletRequest request, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now().toString());
+        body.put("status", 401);
+        body.put("error", "Unauthorized");
+        body.put("message", message);
+        body.put("path", request.getRequestURI());
+
+        new ObjectMapper().writeValue(response.getOutputStream(), body);
     }
 }

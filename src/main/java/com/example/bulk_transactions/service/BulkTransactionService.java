@@ -1,10 +1,10 @@
 package com.example.bulk_transactions.service;
 
-import com.example.bulk_transactions.client.TransactionClient;
+import com.example.bulk_transactions.client.TransactionServiceClient;
 import com.example.bulk_transactions.dto.BulkTransactionRequest;
 import com.example.bulk_transactions.dto.BulkTransactionResponse;
-import com.example.bulk_transactions.dto.TransactionRequest;
-import com.example.bulk_transactions.dto.TransactionResult;
+import com.example.bulk_transactions.dto.TransactionServiceRequest;
+import com.example.bulk_transactions.dto.TransactionServiceResult;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -22,43 +22,43 @@ import java.util.concurrent.Executors;
 @Service
 @Slf4j
 public class BulkTransactionService {
-    private final TransactionClient transactionClient;
+    private final TransactionServiceClient transactionServiceClient;
     private final MeterRegistry meterRegistry;
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
 
-    public BulkTransactionService(TransactionClient transactionClient, MeterRegistry meterRegistry) {
-        this.transactionClient = transactionClient;
+    public BulkTransactionService(TransactionServiceClient transactionServiceClient, MeterRegistry meterRegistry) {
+        this.transactionServiceClient = transactionServiceClient;
         this.meterRegistry = meterRegistry;
     }
 
     @CircuitBreaker(name = "transactionService", fallbackMethod = "fallbackProcess")
     @Retry(name = "transactionService")
     public BulkTransactionResponse processBulkTransactions(@Valid BulkTransactionRequest request) {
-        List<CompletableFuture<TransactionResult>> futures = request.getTransactions()
+        List<CompletableFuture<TransactionServiceResult>> futures = request.getTransactions()
                 .stream()
                 .map(transaction -> CompletableFuture.supplyAsync(() -> processSingleTransaction(request.getBatchId(), transaction), executor))
                 .toList();
 
-        List<TransactionResult> results = futures.stream()
+        List<TransactionServiceResult> results = futures.stream()
                 .map(CompletableFuture::join)
                 .toList();
 
         return new BulkTransactionResponse(request.getBatchId(), results);
     }
 
-    private TransactionResult processSingleTransaction(@NotBlank String batchId, TransactionRequest transaction) {
+    private TransactionServiceResult processSingleTransaction(@NotBlank String batchId, TransactionServiceRequest transaction) {
         MDC.put("batchId", batchId);
         MDC.put("transactionId", transaction.getTransactionId());
 
         try {
-            transactionClient.processTransaction(transaction);
+            transactionServiceClient.processTransaction(transaction);
             log.info("Transaction succeeded");
             meterRegistry.counter("transactions.success.count").increment();
-            return new TransactionResult(transaction.getTransactionId(), "SUCCESS", null);
+            return new TransactionServiceResult(transaction.getTransactionId(), "SUCCESS", null);
         } catch (Exception e) {
             log.error("Transaction failed: {}", e.getMessage());
             meterRegistry.counter("transactions.failure.count").increment();
-            return new TransactionResult(transaction.getTransactionId(), "FAILED", e.getMessage());
+            return new TransactionServiceResult(transaction.getTransactionId(), "FAILED", e.getMessage());
         } finally {
             MDC.clear();
         }

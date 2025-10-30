@@ -14,5 +14,5 @@ public class BulkTransactionRequest {
 
     @NotEmpty
     @Valid
-    private List<TransactionRequest> transactions;
+    private List<TransactionServiceRequest> transactions;
 }

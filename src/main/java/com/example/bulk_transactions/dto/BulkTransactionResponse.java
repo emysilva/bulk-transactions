@@ -9,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class BulkTransactionResponse {
     private String batchId;
-    private List<TransactionResult> results;
+    private List<TransactionServiceResult> results;
 }

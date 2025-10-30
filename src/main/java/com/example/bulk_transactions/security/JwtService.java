@@ -39,11 +39,13 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, AppUser userDetails) {
+        Instant expiry = Instant.now().plusMillis(expirationTime);
+
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(Date.from(Instant.ofEpochSecond(expirationTime)))
+                .expiration(Date.from(expiry))
                 .signWith(getSignInKey())
                 .compact();
     }

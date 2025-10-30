@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class TransactionResult {
+public class TransactionServiceResult {
     private String transactionId;
     private String status;
     private String reason;

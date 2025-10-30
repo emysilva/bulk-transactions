@@ -2,29 +2,28 @@ package com.example.bulk_transactions.service;
 
 import com.example.bulk_transactions.dto.LoginRequest;
 import com.example.bulk_transactions.dto.RegisterRequest;
+import com.example.bulk_transactions.exception.InvalidCredentialsException;
 import com.example.bulk_transactions.model.AppUser;
 import com.example.bulk_transactions.repository.UserRepository;
 import com.example.bulk_transactions.security.JwtService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
     }
 
     public void registerUser(RegisterRequest request) {
@@ -41,12 +40,13 @@ public class UserService {
     }
 
     public String loginUser(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
-
         AppUser user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new InvalidCredentialsException("Incorrect credentials"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            log.warn("Failed login attempt for user: {}", request.getUsername());
+            throw new InvalidCredentialsException("Incorrect credentials");
+        }
 
         return jwtService.generateToken(user);
     }
