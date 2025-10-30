@@ -5,8 +5,6 @@ import com.example.bulk_transactions.dto.BulkTransactionRequest;
 import com.example.bulk_transactions.dto.BulkTransactionResponse;
 import com.example.bulk_transactions.dto.TransactionServiceRequest;
 import com.example.bulk_transactions.dto.TransactionServiceResult;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -31,8 +29,6 @@ public class BulkTransactionService {
         this.meterRegistry = meterRegistry;
     }
 
-    @CircuitBreaker(name = "transactionService", fallbackMethod = "fallbackProcess")
-    @Retry(name = "transactionService")
     public BulkTransactionResponse processBulkTransactions(@Valid BulkTransactionRequest request) {
         List<CompletableFuture<TransactionServiceResult>> futures = request.getTransactions()
                 .stream()

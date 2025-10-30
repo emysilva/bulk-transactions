@@ -20,8 +20,8 @@ public class TransactionServiceClient {
         this.webClient = webClientBuilder.baseUrl(baseUrl).build();
     }
 
-    @Retry(name = "transactionServiceRetry")
-    @CircuitBreaker(name = "transactionServiceCB", fallbackMethod = "fallbackTransaction")
+    @Retry(name = "transaction-service-retry")
+    @CircuitBreaker(name = "transaction-service-cb", fallbackMethod = "fallbackTransaction")
     public void processTransaction(TransactionServiceRequest transaction) {
         webClient.post()
                 .uri("/api/v1/transactions")

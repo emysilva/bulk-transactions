@@ -29,13 +29,13 @@ spring:
 resilience4j:
   retry:
     instances:
-      txServiceRetry:
+      transaction-service-retry:
         max-attempts: 3
-        wait-duration: 500ms
+        wait-duration: 1s
         exponential-backoff-multiplier: 2
   circuitbreaker:
     instances:
-      txServiceCB:
+      transaction-service-cb:
         sliding-window-type: COUNT_BASED
         sliding-window-size: 10
         failure-rate-threshold: 50
