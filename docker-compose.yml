@@ -1,0 +1,50 @@
+services:
+  bulk-transactions:
+    container_name: bulk-transactions
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bulk-transactions:latest
+    ports:
+      - "8083:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/bulk_transactions_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: bulk_user
+      SPRING_DATASOURCE_PASSWORD: bulk_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:-UseContainerSupport"
+      TRANSACTION_SERVICE_BASE_URL: http://host.docker.internal:8085
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - bulk-network
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: bulk_transactions_db
+      MYSQL_USER: bulk_user
+      MYSQL_PASSWORD: bulk_pass
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bulk-network
+
+volumes:
+  mysql_data:
+
+networks:
+  bulk-network:
+    driver: bridge

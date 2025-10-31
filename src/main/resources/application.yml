@@ -43,7 +43,7 @@ resilience4j:
 
 
 transaction-service:
-  base-url: http://localhost:8082
+  base-url: http://localhost:8085
 
 jwt:
   secret: yE3qUb6gzzRKZy0Yih+kGkkxEtbzqMSHZCxCEcWeOMA=
