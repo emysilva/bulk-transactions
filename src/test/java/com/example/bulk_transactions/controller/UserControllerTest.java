@@ -1,11 +1,9 @@
 package com.example.bulk_transactions.controller;
 
-import com.example.bulk_transactions.dto.LoginRequest;
-import com.example.bulk_transactions.dto.RegisterRequest;
+import com.example.bulk_transactions.dto.auth.LoginRequest;
+import com.example.bulk_transactions.dto.auth.RegisterRequest;
 import com.example.bulk_transactions.exception.BadRequestException;
 import com.example.bulk_transactions.exception.InvalidCredentialsException;
-import com.example.bulk_transactions.security.CustomerDetailsService;
-import com.example.bulk_transactions.security.JwtService;
 import com.example.bulk_transactions.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

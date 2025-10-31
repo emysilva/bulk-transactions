@@ -1,7 +1,7 @@
 package com.example.bulk_transactions.controller;
 
-import com.example.bulk_transactions.dto.LoginRequest;
-import com.example.bulk_transactions.dto.RegisterRequest;
+import com.example.bulk_transactions.dto.auth.LoginRequest;
+import com.example.bulk_transactions.dto.auth.RegisterRequest;
 import com.example.bulk_transactions.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

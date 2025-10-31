@@ -1,6 +1,6 @@
 package com.example.bulk_transactions.client;
 
-import com.example.bulk_transactions.dto.TransactionServiceRequest;
+import com.example.bulk_transactions.dto.client.TransactionServiceRequest;
 import com.example.bulk_transactions.exception.TransactionServiceException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;

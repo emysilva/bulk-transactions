@@ -1,4 +1,4 @@
-package com.example.bulk_transactions.dto;
+package com.example.bulk_transactions.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

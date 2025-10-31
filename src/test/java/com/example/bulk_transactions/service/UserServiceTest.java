@@ -1,7 +1,7 @@
 package com.example.bulk_transactions.service;
 
-import com.example.bulk_transactions.dto.LoginRequest;
-import com.example.bulk_transactions.dto.RegisterRequest;
+import com.example.bulk_transactions.dto.auth.LoginRequest;
+import com.example.bulk_transactions.dto.auth.RegisterRequest;
 import com.example.bulk_transactions.exception.InvalidCredentialsException;
 import com.example.bulk_transactions.model.AppUser;
 import com.example.bulk_transactions.repository.UserRepository;

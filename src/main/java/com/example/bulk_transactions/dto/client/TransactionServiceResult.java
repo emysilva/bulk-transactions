@@ -1,4 +1,4 @@
-package com.example.bulk_transactions.dto;
+package com.example.bulk_transactions.dto.client;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

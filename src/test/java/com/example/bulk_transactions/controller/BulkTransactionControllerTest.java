@@ -1,7 +1,7 @@
 package com.example.bulk_transactions.controller;
 
 import com.example.bulk_transactions.dto.BulkTransactionRequest;
-import com.example.bulk_transactions.dto.TransactionServiceRequest;
+import com.example.bulk_transactions.dto.client.TransactionServiceRequest;
 import com.example.bulk_transactions.model.AppUser;
 import com.example.bulk_transactions.repository.UserRepository;
 import com.example.bulk_transactions.security.JwtService;

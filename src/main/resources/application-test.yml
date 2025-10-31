@@ -17,6 +17,10 @@ spring:
       enabled: true
       path: /h2-console
 
+jwt:
+  secret: h8jdMysWxPFLStqi/OzPDON0kJob/dXYaIPJg60X8Bg=
+  expiration: 300000 # 5 minutes for testing
+
 # Disable security telemetry/log spam during tests
 logging:
   level:
