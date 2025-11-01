@@ -20,7 +20,7 @@ It integrates securely with an external **Transaction Service** and provides ful
 ### bulk-transactions/
 #### ├── controller/ REST controllers (Auth & Transaction endpoints)
 #### ├── service/ Core business logic
-#### ├── client/ WebClient/Feign client to Transaction Service
+#### ├── client/ WebClient client to Transaction Service
 #### ├── dto/ Request & Response DTOs
 #### ├── security/ JWT filters, service, and config
 #### ├── exception/ Global exception handling
@@ -88,7 +88,7 @@ ___
 
 ## 🧪 Example Usage
 ### 1️⃣ Register a User
-curl -X POST http://localhost:8081/api/v1/auth/register \
+curl -X POST /api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "user1",
@@ -97,7 +97,7 @@ curl -X POST http://localhost:8081/api/v1/auth/register \
   }'
 
 ### 2️⃣ Login to Get Token
-curl -X POST http://localhost:8081/api/v1/auth/login \
+curl -X POST /api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "username": "user1",
@@ -112,7 +112,7 @@ curl -X POST http://localhost:8081/api/v1/auth/login \
 }
 
 ### 3️⃣ Submit Bulk Transactions
-curl -X POST http://localhost:8081/api/v1/bulk-transactions \
+curl -X POST /api/v1/bulk-transactions \
   -H "Authorization: Bearer <JWT_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -125,7 +125,7 @@ curl -X POST http://localhost:8081/api/v1/bulk-transactions \
 
 ## 🧰 Testing
 ### Run All Tests
-./mvnw test
+mvn test
 
 
 The test suite covers:
@@ -152,11 +152,10 @@ ___
 
 ## 🧑‍💻 Local Development
 ### Run the Service
-./mvnw spring-boot:run
+mvn spring-boot:run
 
 ### Build Executable JAR
-./mvnw clean package
-java -jar target/bulk-transactions-0.0.1-SNAPSHOT.jar
+mvn clean package
 
 ___
 
@@ -164,7 +163,7 @@ ___
 
 ### Each transaction is forwarded to the Transaction Service:
 
-POST http://localhost:8082/api/v1/transactions
+POST /api/v1/transactions
 
 ### Example Transaction Service Response:
 {
@@ -184,10 +183,10 @@ ___
 
 ## 🩺 Health & Monitoring
 ### Health Endpoint
-curl -H "Authorization: Bearer <ADMIN_TOKEN>" http://localhost:8081/actuator/health
+curl -H "Authorization: Bearer <ADMIN_TOKEN>" /actuator/health
 
 ### Metrics Endpoint
-curl -H "Authorization: Bearer <ADMIN_TOKEN>" http://localhost:8081/actuator/metrics
+curl -H "Authorization: Bearer <ADMIN_TOKEN>" /actuator/metrics
 
 ___
 
@@ -215,3 +214,20 @@ ___
 
 - 🧪 JUnit 5 + Mockito
 
+___
+
+## ▶️ Run Locally with Docker
+### Step 1: Build the JAR
+mvn clean package
+
+### Step 2: Build and Run Containers
+docker compose up -d --build
+
+### Step 3: Verify Running Containers
+docker ps
+
+## 🧹 Reset / Clear Docker Database
+
+### If you want to clear all MySQL data:
+
+docker compose down -v
