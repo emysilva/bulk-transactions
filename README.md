@@ -191,10 +191,10 @@ curl -H "Authorization: Bearer <ADMIN_TOKEN>" /actuator/metrics
 ___
 
 ## 🔒 Role & Access Matrix
-Role	Accessible Endpoints	Description
-ROLE_USER	/api/v1/bulk-transactions	Submit bulk transactions
-ROLE_ADMIN	/actuator/**	View system health and metrics
-Anonymous	/api/v1/auth/**	Register & login only
+### Role	Accessible Endpoints	Description
+- ROLE_USER	/api/v1/bulk-transactions	Submit bulk transactions
+- ROLE_ADMIN	/actuator/**	View system health and metrics
+- Public	/api/v1/auth/**	Register & login only
 
 ___
 
