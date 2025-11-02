@@ -26,41 +26,7 @@ It integrates securely with an external **Transaction Service** and provides ful
 #### ├── exception/ Global exception handling
 #### └── repository/ User data persistence
 
-
 ---
-
-## ⚙️ Configuration
-
-### `application.yml`
-```yaml
-server:
-  port: 8081
-
-spring:
-  datasource:
-    url: jdbc:h2:mem:bulkdb;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
-transaction-service:
-  base-url: http://localhost:8082
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, metrics
-
-application:
-  jwt:
-    secret: your-strong-secret-key
-```
-___
 
 ## 🧩 API Endpoints
 ### 🔐 Authentication
@@ -122,6 +88,8 @@ curl -X POST /api/v1/bulk-transactions \
       {"transactionId": "tx-002", "fromAccount": "SRC2", "toAccount": "DEST2", "amount": 2300}
     ]
   }'
+
+___
 
 ## 🧰 Testing
 ### Run All Tests
