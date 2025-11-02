@@ -1,5 +1,8 @@
 package com.example.bulk_transactions.exception;
 
+import lombok.Getter;
+
+@Getter
 public class TransactionServiceException extends RuntimeException {
 
     private final int statusCode;
@@ -11,23 +14,4 @@ public class TransactionServiceException extends RuntimeException {
         this.serviceName = "TransactionService";
     }
 
-    public TransactionServiceException(String message, int statusCode) {
-        super(message);
-        this.statusCode = statusCode;
-        this.serviceName = "TransactionService";
-    }
-
-    public TransactionServiceException(String message, Throwable cause) {
-        super(message, cause);
-        this.statusCode = 500;
-        this.serviceName = "TransactionService";
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
 }

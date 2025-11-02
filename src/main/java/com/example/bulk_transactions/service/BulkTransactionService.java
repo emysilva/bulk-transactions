@@ -7,9 +7,7 @@ import com.example.bulk_transactions.dto.client.TransactionServiceRequest;
 import com.example.bulk_transactions.dto.client.TransactionServiceResult;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +20,7 @@ import java.util.concurrent.Executors;
 public class BulkTransactionService {
     private final TransactionServiceClient transactionServiceClient;
     private final MeterRegistry meterRegistry;
-    private final ExecutorService executor = Executors.newFixedThreadPool(10);
+    private final ExecutorService executor = Executors.newFixedThreadPool(3);
 
     public BulkTransactionService(TransactionServiceClient transactionServiceClient, MeterRegistry meterRegistry) {
         this.transactionServiceClient = transactionServiceClient;
@@ -42,21 +40,16 @@ public class BulkTransactionService {
         return new BulkTransactionResponse(request.getBatchId(), results);
     }
 
-    private TransactionServiceResult processSingleTransaction(@NotBlank String batchId, TransactionServiceRequest transaction) {
-        MDC.put("batchId", batchId);
-        MDC.put("transactionId", transaction.getTransactionId());
-
+    private TransactionServiceResult processSingleTransaction(String batchId, TransactionServiceRequest transaction) {
         try {
             transactionServiceClient.processTransaction(transaction);
-            log.info("Transaction succeeded");
+            log.info("Transaction succeeded for batchId {} transactionId {}", batchId, transaction.getTransactionId());
             meterRegistry.counter("transactions.success.count").increment();
             return new TransactionServiceResult(transaction.getTransactionId(), "SUCCESS", null);
         } catch (Exception e) {
-            log.error("Transaction failed: {}", e.getMessage());
+            log.error("Transaction failed for batchId {} transactionId {}: {}", batchId, transaction.getTransactionId(), e.getMessage());
             meterRegistry.counter("transactions.failure.count").increment();
             return new TransactionServiceResult(transaction.getTransactionId(), "FAILED", e.getMessage());
-        } finally {
-            MDC.clear();
         }
     }
 }

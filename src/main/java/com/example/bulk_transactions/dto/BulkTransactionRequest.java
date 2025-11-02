@@ -12,10 +12,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class BulkTransactionRequest {
-    @NotBlank
+    @NotBlank(message = "BatchId is required")
     private String batchId;
 
-    @NotEmpty
+    @NotEmpty(message = "At least one transaction is required")
     @Valid
     private List<TransactionServiceRequest> transactions;
 }

@@ -26,6 +26,7 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String role;
 
     @CreationTimestamp

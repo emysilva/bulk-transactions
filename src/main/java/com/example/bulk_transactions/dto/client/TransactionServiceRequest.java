@@ -11,13 +11,13 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 public class TransactionServiceRequest {
-    @NotBlank
+    @NotBlank(message = "TransactionId is required")
     private String transactionId;
 
-    @NotBlank
+    @NotBlank(message = "Source account is required")
     private String fromAccount;
 
-    @NotBlank
+    @NotBlank(message = "Destination account is required")
     private String toAccount;
 
     @NotNull

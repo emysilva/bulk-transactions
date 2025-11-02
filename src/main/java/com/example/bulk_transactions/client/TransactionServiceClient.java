@@ -32,7 +32,7 @@ public class TransactionServiceClient {
                 .block();
     }
 
-    public void fallbackTransaction(TransactionServiceRequest transaction, Throwable t) throws Exception {
+    public void fallbackTransaction(TransactionServiceRequest transaction, Throwable t) {
         log.warn("Fallback triggered for transaction {}: {}", transaction.getTransactionId(), t.toString());
         throw new TransactionServiceException("TransactionService unavailable:" + t.getMessage());
     }
